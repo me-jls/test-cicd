@@ -45,9 +45,11 @@ pipeline {
                 expression { params.CONDITIONAL_PARAM }
             }
             steps {
-                echo "Using conditional parameter: ${params.CONDITIONAL_PARAM}"
-                yamlContent.alarms.each { dataAlarm ->
-                    echo "Version: ${dataAlarm.name}"
+                script {
+                    echo "Using conditional parameter: ${params.CONDITIONAL_PARAM}"
+                    yamlContent.alarms.each { dataAlarm ->
+                        echo "Version: ${dataAlarm.name}"
+                    }
                 }
             }
         }
