@@ -5,10 +5,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
-                sh "ls -ltr"
+                sh 'ls -ltr'
             }
         }
-        
+
         stage('Check File and Setup Parameters') {
             steps {
                 script {
@@ -26,15 +26,31 @@ pipeline {
                 }
             }
         }
-        
+
+        stage('Read YAML') {
+            steps {
+                script {
+                    // Charger la fonction de lecture YAML
+                    def yamlContent = readYaml(file: 'config-dev.yml')
+                    // Exemple d'utilisation des données lues
+                    echo "Version: ${yamlContent.versions.api.version}"
+
+                // Vous pouvez maintenant utiliser `yamlContent` dans les prochains stages
+                }
+            }
+                }
+
         stage('Use Parameter') {
             when {
                 expression { params.CONDITIONAL_PARAM }
             }
             steps {
                 echo "Using conditional parameter: ${params.CONDITIONAL_PARAM}"
+                yamlContent.alarms.each { dataAlarm ->
+                    echo "Version: ${dataAlarm.name}"
+                }
             }
-        }        
+        }
 
         stage('Create RC Tag') {
             when {
@@ -51,7 +67,7 @@ pipeline {
                     if (!tagExists) {
                         // sh "git tag -a ${tagName} -m 'Release Candidate 1 for version 1.0.0' ${commitSHA}"
                         // sh "git push origin ${tagName}"
-                        echo "Tag is created"
+                        echo 'Tag is created'
                     } else {
                         echo "Tag ${tagName} already exists."
                     }

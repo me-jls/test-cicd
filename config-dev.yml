@@ -1,0 +1,13 @@
+versions:
+  api:
+    version: 7.3
+    repository: artifactory.com
+  frontend:
+    version: 8.0
+
+alarms:
+  - name: alarm01
+    type: cemra
+  - name: alarm02
+    type: vca
+
