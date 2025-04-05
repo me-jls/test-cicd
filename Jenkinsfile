@@ -8,6 +8,33 @@ pipeline {
                 sh "ls -ltr"
             }
         }
+        
+        stage('Check File and Setup Parameters') {
+            steps {
+                script {
+                    def fileExists = fileExists('README.md')
+                    if (fileExists) {
+                        properties([
+                            parameters([
+                                string(defaultValue: 'yesss', description: 'Enter value since file exists', name: 'CONDITIONAL_PARAM')
+                            ])
+                        ])
+                        echo 'Conditional parameter added.'
+                    } else {
+                        echo 'File not found. Skipping parameter setup.'
+                    }
+                }
+            }
+        }
+        
+        stage('Use Parameter') {
+            when {
+                expression { params.CONDITIONAL_PARAM }
+            }
+            steps {
+                echo "Using conditional parameter: ${params.CONDITIONAL_PARAM}"
+            }
+        }        
 
         stage('Create RC Tag') {
             when {
@@ -16,7 +43,7 @@ pipeline {
             steps {
                 script {
                     def tagName = 'v1.0.0-rc1' // Exemple, nom du tag à générer
-                    def commitSHA = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                    //def commitSHA = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
 
                     // Vérifier que le tag n'existe pas déjà
                     def tagExists = sh(script: "git tag -l ${tagName}", returnStdout: true).trim()
