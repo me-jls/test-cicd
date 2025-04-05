@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     // Charger la fonction de lecture YAML
-                    def yamlContent = readYaml(file: 'config-dev.yml')
+                    yamlContent = readYaml(file: 'config-dev.yml')
                     // Exemple d'utilisation des données lues
                     echo "Version: ${yamlContent.versions.api.version}"
 
